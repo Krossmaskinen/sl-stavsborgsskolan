@@ -1,6 +1,7 @@
 <script type="ts">
 	import { slide } from 'svelte/transition';
 	import { differenceInMinutes } from 'date-fns';
+	import TimeIndicator from './TimeIndicator.svelte';
 
 	export let lineNumber: string;
 	export let destination: string;
@@ -26,25 +27,23 @@
 	}
 
 	function getTimeIndicator(date: Date): string {
-		let badgeType = '';
 		let timeIndicator = '';
 
 		if (differenceInMinutes(date, timeRightNow) <= 5) {
-			badgeType = 'error';
+			timeIndicator = 'error';
 		} else if (differenceInMinutes(date, timeRightNow) <= 15) {
-			badgeType = 'warning';
-		}
-
-		if (badgeType) {
-			timeIndicator = `badge badge-${badgeType}`;
+			timeIndicator = 'warning';
 		}
 
 		return timeIndicator;
 	}
+
+	$: badgeType = getTimeIndicator(departureTime);
 </script>
 
 <li class="indicator flex w-full" in:slide={{ delay: index * 80 }}>
-	<span class={`indicator-item ${getTimeIndicator(departureTime)}`} />
+	<TimeIndicator {badgeType} />
+
 	<div class="grid grid-cols-4 bg-secondary text-secondary-content p-4 rounded-md mb-4 w-full">
 		<p class="col-span-1">
 			{lineNumber}
