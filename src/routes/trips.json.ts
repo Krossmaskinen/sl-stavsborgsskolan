@@ -1,4 +1,4 @@
-import { API_KEY, API_URL } from '$lib/env';
+import { SL_REAL_TIME_DEPARTURES_API_KEY, SL_REAL_TIME_DEPARTURES_API_URL } from '$lib/env';
 
 const busStopIds = [
 	{
@@ -10,7 +10,7 @@ const timeWindowInMinutes = 60;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getNextTrip(): Promise<any> {
-	const url = `${API_URL}?key=${API_KEY}&siteid=${busStopIds[0].id}&timewindow=${timeWindowInMinutes}`;
+	const url = `${SL_REAL_TIME_DEPARTURES_API_URL}?key=${SL_REAL_TIME_DEPARTURES_API_KEY}&siteid=${busStopIds[0].id}&timewindow=${timeWindowInMinutes}`;
 
 	console.log(url);
 

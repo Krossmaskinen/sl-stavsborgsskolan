@@ -1,8 +1,8 @@
-import { SL_SITE_API_KEY, SL_SITE_API_URL } from '$lib/env';
+import { SL_STOP_LOOKUP_API_KEY, SL_STOP_LOOKUP_API_URL } from '$lib/env';
 
 async function getBusstopsFromQuery(queryString) {
-	const apiKey = SL_SITE_API_KEY;
-	const url = `${SL_SITE_API_URL}?key=${apiKey}&searchstring=${queryString}&stationsonly=true&maxresults=10`;
+	const apiKey = SL_STOP_LOOKUP_API_KEY;
+	const url = `${SL_STOP_LOOKUP_API_URL}?key=${apiKey}&searchstring=${queryString}&stationsonly=true&maxresults=10`;
 	const result = await fetch(url).then((res) => res.json());
 
 	return result;
