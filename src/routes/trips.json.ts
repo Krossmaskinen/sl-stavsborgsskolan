@@ -12,6 +12,8 @@ const timeWindowInMinutes = 60;
 async function getNextTrip(): Promise<any> {
 	const url = `${API_URL}?key=${API_KEY}&siteid=${busStopIds[0].id}&timewindow=${timeWindowInMinutes}`;
 
+	console.log(url);
+
 	const result = await fetch(url, {
 		method: 'GET',
 		mode: 'cors',
@@ -28,7 +30,18 @@ async function getNextTrip(): Promise<any> {
 }
 
 export async function get() {
-	const buses = await getNextTrip().then((res) => res.ResponseData.Buses);
+	const response = await getNextTrip();
+	const isRequestSuccessful = response.StatusCode === 0;
+
+	if (!isRequestSuccessful) {
+		return {
+			body: {
+				error: { statusCode: response.StatusCode, message: response.Message }
+			}
+		};
+	}
+
+	const buses = response.ResponseData?.Buses;
 
 	return { body: { buses } };
 }
