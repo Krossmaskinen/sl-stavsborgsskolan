@@ -20,3 +20,11 @@ export interface Bus {
 	destination: string;
 	departureTime: Date;
 }
+
+export interface Busstop {
+	Name: string;
+	SiteId: number;
+	Type: string;
+	X: string;
+	Y: string;
+}

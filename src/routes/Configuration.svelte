@@ -1,22 +1,21 @@
 <script type="ts">
+	import { goto } from '$app/navigation';
+	import { getBusesFromBusstop } from '$lib/api';
+
+	import BusButton from '$lib/BusButton.svelte';
+	import type { Busstop } from '$lib/Constants';
 	import SearchButton from '$lib/SearchButton.svelte';
 
 	let departureSearchString = '';
 	let arrivalSearchString = '';
 	let departureBusstops;
-	let arrivalBusstops;
-	let selectedDepartureBusstop;
-	let selectedArrivalBusstop;
+	let selectedDepartureBusstop: Busstop;
+	let destinationBusstops;
+	let selectedDestination;
 
 	async function getDepartureBusstops() {
 		if (departureSearchString) {
 			departureBusstops = await getStationsFromQuery(departureSearchString);
-		}
-	}
-
-	async function getArrivalBusstops() {
-		if (arrivalSearchString) {
-			arrivalBusstops = await getStationsFromQuery(arrivalSearchString);
 		}
 	}
 
@@ -37,17 +36,24 @@
 		selectedDepartureBusstop = busstop;
 		clearSearchResults();
 		clearSearchFields();
+		updateDestinations();
 	}
 
-	function selectArrivalBusstop(busstop) {
-		selectedArrivalBusstop = busstop;
+	function selectDestinationBusstop(busstop) {
+		selectedDestination = busstop;
 		clearSearchResults();
 		clearSearchFields();
 	}
 
+	async function updateDestinations() {
+		const buses = await getBusesFromBusstop(selectedDepartureBusstop.SiteId);
+
+		destinationBusstops = buses;
+	}
+
 	function clearSearchResults() {
 		departureBusstops = undefined;
-		arrivalBusstops = undefined;
+		destinationBusstops = undefined;
 	}
 
 	function clearSearchFields() {
@@ -58,6 +64,8 @@
 
 <div>
 	<h1 class="my-8">Configuration</h1>
+
+	<BusButton on:click={() => goto('/')} />
 
 	<form on:submit|preventDefault={getDepartureBusstops}>
 		<div class="form-control">
@@ -97,35 +105,19 @@
 
 	<div class="divider" />
 
-	<form on:submit|preventDefault={getArrivalBusstops}>
-		<div class="form-control">
-			<label for="to-stop-query" class="label">Till</label>
-			<div class="input-group">
-				<input
-					type="text"
-					class="input input-bordered input-primary w-full"
-					id="to-stop-query"
-					placeholder="Välj hållplats till..."
-					bind:value={arrivalSearchString}
-				/>
-				<SearchButton />
-			</div>
-		</div>
-	</form>
-
-	{#if selectedArrivalBusstop && !arrivalBusstops}
+	{#if selectedDestination && !destinationBusstops}
 		<div class="bg-secondary text-secondary-content p-4 rounded-md my-4 w-full">
-			{selectedArrivalBusstop.Name} - {selectedArrivalBusstop.SiteId}
+			{selectedDestination.lineNumber} - {selectedDestination.destination}
 		</div>
 	{/if}
 
 	<div>
-		{#if arrivalBusstops}
+		{#if destinationBusstops}
 			<ul class="menu bg-accent w-full">
-				{#each arrivalBusstops as busstop, i ({})}
+				{#each destinationBusstops as busstop, i ({})}
 					<li>
-						<button on:click={() => selectArrivalBusstop(busstop)}
-							>{busstop.Name} - {busstop.SiteId}</button
+						<button on:click={() => selectDestinationBusstop(busstop)}
+							>{busstop.lineNumber} - {busstop.destination}</button
 						>
 					</li>
 				{/each}

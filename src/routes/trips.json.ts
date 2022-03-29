@@ -9,8 +9,8 @@ const busStopIds = [
 const timeWindowInMinutes = 60;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getNextTrip(): Promise<any> {
-	const url = `${SL_REAL_TIME_DEPARTURES_API_URL}?key=${SL_REAL_TIME_DEPARTURES_API_KEY}&siteid=${busStopIds[0].id}&timewindow=${timeWindowInMinutes}`;
+async function getNextTrip(busStopId): Promise<any> {
+	const url = `${SL_REAL_TIME_DEPARTURES_API_URL}?key=${SL_REAL_TIME_DEPARTURES_API_KEY}&siteid=${busStopId}&timewindow=${timeWindowInMinutes}`;
 
 	console.log(url);
 
@@ -29,8 +29,9 @@ async function getNextTrip(): Promise<any> {
 	return result;
 }
 
-export async function get() {
-	const response = await getNextTrip();
+export async function get(event) {
+	const busStopId = event.url.searchParams.get('busStopId');
+	const response = await getNextTrip(busStopId);
 	const isRequestSuccessful = response.StatusCode === 0;
 
 	if (!isRequestSuccessful) {
